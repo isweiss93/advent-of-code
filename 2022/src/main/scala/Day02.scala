@@ -15,7 +15,7 @@ object Day02 extends App {
     val oppWeapon = Weapon.withName(opponent)
     val expectedResult = Result.withName(result)
 
-    oppWeapon.chooseWeapon(expectedResult).fight(oppWeapon)
+    expectedResult.chooseWeapon(oppWeapon).fight(oppWeapon)
   }
 
   println(scoresPart1.sum)
@@ -36,16 +36,6 @@ sealed abstract class Weapon(baseScore: Long)
       case _     => 0L
     }
     baseScore + result
-  }
-
-  def chooseWeapon(result: Result): Weapon = {
-    import Result._
-
-    result match {
-      case Win => isBeatenBy
-      case Draw => this
-      case Lose => Beats
-    }
   }
 }
 
@@ -75,7 +65,9 @@ private object Weapon extends Enum[Weapon] {
   }
 }
 
-sealed trait Result extends EnumEntry
+sealed trait Result extends EnumEntry {
+  def chooseWeapon(weapon: Weapon): Weapon
+}
 
 object Result extends Enum[Result] {
   override def withName(name: String): Result =
@@ -88,7 +80,14 @@ object Result extends Enum[Result] {
 
   val values = findValues
 
-  case object Win extends Result
-  case object Draw extends Result
-  case object Lose extends Result
+  case object Win extends Result {
+    override def chooseWeapon(weapon: Weapon): Weapon = weapon.isBeatenBy
+  }
+
+  case object Draw extends Result {
+    override def chooseWeapon(weapon: Weapon): Weapon = weapon
+  }
+  case object Lose extends Result {
+    override def chooseWeapon(weapon: Weapon): Weapon = weapon.Beats
+  }
 }
