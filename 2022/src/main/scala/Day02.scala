@@ -60,6 +60,7 @@ private object Weapon extends Enum[Weapon] {
     }
 
   val values = findValues
+
   case object Rock extends Weapon(1) {
     override lazy val Beats = Scissors
     override lazy val isBeatenBy: Weapon = Paper
@@ -84,7 +85,9 @@ object Result extends Enum[Result] {
       case "Z" => Win
       case _ => throw new RuntimeException("No matching result!")
     }
+
   val values = findValues
+
   case object Win extends Result
   case object Draw extends Result
   case object Lose extends Result
