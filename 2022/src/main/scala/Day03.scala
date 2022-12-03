@@ -1,5 +1,11 @@
 import scala.io.Source
 
+/**
+ * Adding comment block
+ * to hide solution
+ * when sent
+ * in discord
+ */
 object Day03 extends App {
   val rucksacks: Seq[Seq[Char]] = Source.fromResource("day03.txt").getLines.toSeq.map(_.toCharArray.toSeq)
 
