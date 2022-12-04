@@ -1,5 +1,11 @@
 import scala.io.Source
 
+/**
+ *
+ *
+ *
+ *
+ */
 object Day04 extends App {
   val pairs = Source.fromResource("day04.txt").getLines.toList.map { case s"${start1}-${end1},${start2}-${end2}" =>
     val elf1 = start1.toInt.to(end1.toInt).toList
