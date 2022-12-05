@@ -12,7 +12,7 @@ object Day02 extends App {
   }
 
   private val scoresPart2 = guide.map { case s"${opponent} ${result}" =>
-    val oppWeapon = Weapon.withName(opponent)
+    val oppWeapon      = Weapon.withName(opponent)
     val expectedResult = Result.withName(result)
 
     expectedResult.chooseWeapon(oppWeapon).fight(oppWeapon)
@@ -22,8 +22,7 @@ object Day02 extends App {
   println(scoresPart2.sum)
 }
 
-sealed abstract class Weapon(baseScore: Long)
-    extends EnumEntry {
+sealed abstract class Weapon(baseScore: Long) extends EnumEntry {
 
   val Beats: Weapon
   val isBeatenBy: Weapon
@@ -52,15 +51,17 @@ private object Weapon extends Enum[Weapon] {
   val values = findValues
 
   case object Rock extends Weapon(1) {
-    override lazy val Beats = Scissors
+    override lazy val Beats              = Scissors
     override lazy val isBeatenBy: Weapon = Paper
   }
+
   case object Paper extends Weapon(2) {
-    override lazy val Beats = Rock
+    override lazy val Beats              = Rock
     override lazy val isBeatenBy: Weapon = Scissors
   }
+
   case object Scissors extends Weapon(3) {
-    override lazy val Beats = Paper
+    override lazy val Beats              = Paper
     override lazy val isBeatenBy: Weapon = Rock
   }
 }
@@ -70,12 +71,13 @@ sealed trait Result extends EnumEntry {
 }
 
 object Result extends Enum[Result] {
+
   override def withName(name: String): Result =
     name match {
       case "X" => Lose
       case "Y" => Draw
       case "Z" => Win
-      case _ => throw new RuntimeException("No matching result!")
+      case _   => throw new RuntimeException("No matching result!")
     }
 
   val values = findValues
@@ -87,6 +89,7 @@ object Result extends Enum[Result] {
   case object Draw extends Result {
     override def chooseWeapon(weapon: Weapon): Weapon = weapon
   }
+
   case object Lose extends Result {
     override def chooseWeapon(weapon: Weapon): Weapon = weapon.Beats
   }
