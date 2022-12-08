@@ -1,18 +1,12 @@
 import scala.io.Source
 
-/**
- *
- *
- *
- *
- */
 object Day07 {
 
   def main(args: Array[String]): Unit = {
     val terminal = Source.fromResource("day07.txt").getLines.toSeq
 
     terminal.foldLeft(Directory.root) { case (curr, line) =>
-      val next = line match {
+      line match {
         case "$ cd /"  => curr.toRoot
         case "$ cd .." => curr.parent
         case s"$$ cd ${directoryName}" =>
@@ -29,7 +23,6 @@ object Day07 {
           curr.children = curr.children + (fileName -> File(fileName, fileSize.toLong))
           curr
       }
-      next
     }
 
     val directorySizes = getSizes(Directory.root)
