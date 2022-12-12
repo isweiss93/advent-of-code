@@ -11,42 +11,28 @@ object Day12 {
   def main(args: Array[String]): Unit = {
     val heightmap = Source.fromResource("day12.txt").getLines.toList.map(_.toCharArray.toList)
 
-    part1(heightmap)
-    part2(heightmap)
+    println(findMinSteps(heightmap, 'S', 'E', _ <= 1))
+    println(findMinSteps(heightmap, 'E', 'a', _ >= -1))
   }
 
-  private def part1(heightmap: List[List[Char]]): Unit = {
+  private def findMinSteps(
+    heightmap: List[List[Char]],
+    start: Char,
+    end: Char,
+    check: Int => Boolean
+  ): Int = {
     val (startJ, startI) =
-      heightmap.map(_.indexWhere(_ == 'S')).zipWithIndex.find { case (x, _) => x != -1 }.get
-
-    println(findMinSteps(heightmap, startI, startJ))
-  }
-
-  private def part2(heightmap: List[List[Char]]): Unit = {
-    val starts = heightmap
-      .map(_.zipWithIndex.filter { case (char, _) => Seq('a', 'S').contains(char) }.map(_._2))
-      .zipWithIndex
-      .filter(_._1.nonEmpty)
-      .flatMap { case (list, i) => list.map(j => (i, j)) }
-
-    val shortestPaths = starts.map { case (startI, startJ) =>
-      findMinSteps(heightmap, startI, startJ)
-    }
-
-    println(shortestPaths.min)
-  }
-
-  private def findMinSteps(heightmap: List[List[Char]], startI: Int, startJ: Int): Int = {
+      heightmap.map(_.indexWhere(_ == start)).zipWithIndex.find { case (x, _) => x != -1 }.get
     val visited       = mutable.HashSet((startI, startJ))
     val queue         = mutable.Queue.empty[Entry]
     var minSteps: Int = Int.MaxValue
-    addValidNeighbors(heightmap, Entry(startI, startJ, 0), queue, visited)
+    addValidNeighbors(heightmap, Entry(startI, startJ, 0), queue, visited, check)
 
     while (queue.nonEmpty) {
       val entry = queue.dequeue()
-      if (heightmap(entry.i)(entry.j) == 'E')
+      if (heightmap(entry.i)(entry.j) == end)
         minSteps = math.min(minSteps, entry.steps)
-      addValidNeighbors(heightmap, entry, queue, visited)
+      addValidNeighbors(heightmap, entry, queue, visited, check)
     }
     minSteps
   }
@@ -55,14 +41,15 @@ object Day12 {
     heightmap: List[List[Char]],
     entry: Entry,
     queue: mutable.Queue[Entry],
-    visited: mutable.HashSet[(Int, Int)]
+    visited: mutable.HashSet[(Int, Int)],
+    check: Int => Boolean
   ): Unit =
     entry.neighbors.foreach { case (i, j) =>
       val target = Entry(i, j, entry.steps + 1)
       if (
         heightmap.indices.contains(i) &&
         heightmap.head.indices.contains(j) &&
-        getChar(target, heightmap) - getChar(entry, heightmap) <= 1 &&
+        check(getChar(target, heightmap) - getChar(entry, heightmap)) &&
         !visited.contains((i, j))
       ) {
         queue.enqueue(target)
